@@ -57,7 +57,7 @@ namespace CRMClient
 
 
 
-        private void AddButtonClick(object sender, RoutedEventArgs e)
+        private async void AddButtonClick(object sender, RoutedEventArgs e)
         {
             User user = new User();
             user.name = UserName.Text;
@@ -66,7 +66,7 @@ namespace CRMClient
             user.login = UserLogin.Text;
             user.password = UserPassword.Text;
             user.isDeleted = false;
-            UserController.AddUserAsync(user);
+            Uri returnedUri = await UserController.AddUserAsync(user);
 
             //List<User> users = new List<User>();
             //users = RandomUser.GenerateRandomUserList(20);
@@ -77,7 +77,7 @@ namespace CRMClient
             //}
         }
 
-        private async Task ListButtonClick(object sender, RoutedEventArgs e)
+        private async void ListButtonClick(object sender, RoutedEventArgs e)
         {
             User user = new User();
             user = await UserController.GetUserAsync(1);
