@@ -18,3 +18,5 @@ C:\Users\Windows\source\repos\CRMClient\CRMClient\bin\Debug\System.Net.Http.Form
 C:\Users\Windows\source\repos\CRMClient\CRMClient\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Windows\source\repos\CRMClient\CRMClient\bin\Debug\System.Net.Http.Formatting.xml
 C:\Users\Windows\source\repos\CRMClient\CRMClient\obj\Debug\CRMClient.csproj.CopyComplete
+C:\Users\Windows\source\repos\CRMClient\CRMClient\obj\Debug\Views\UserListingItem.g.cs
+C:\Users\Windows\source\repos\CRMClient\CRMClient\obj\Debug\Views\UserListingItem.baml

@@ -18,6 +18,7 @@ using System.Net.Http;
 using CRMClient.Model;
 using CRMClient.Controllers;
 using CRMClient.Tools;
+using CRMClient.Views;
 
 namespace CRMClient
 {
@@ -43,20 +44,6 @@ namespace CRMClient
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-
-        //static async Task<List<User>> GetUsersListAsync(string path)
-        //{
-        //    User user = null;
-        //    HttpResponseMessage response = await client.GetAsync(path);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        user = await response.Content.ReadAsAsync<User>();
-        //    }
-        //    return user;
-        //}
-
-
-
         private async void AddButtonClick(object sender, RoutedEventArgs e)
         {
             User user = new User();
@@ -66,22 +53,77 @@ namespace CRMClient
             user.login = UserLogin.Text;
             user.password = UserPassword.Text;
             user.isDeleted = false;
-            Uri returnedUri = await UserController.AddUserAsync(user);
+            Uri returnedUri = await UserController.AddUserAsync(user, client);
+            RefreshUsersList();
 
             //List<User> users = new List<User>();
             //users = RandomUser.GenerateRandomUserList(20);
-            //foreach(User user in users)
+            //foreach (User user in users)
             //{
             //    MessageBox.Show($"{user.name} {user.surname}");
-            //    UserController.AddUserAsync(user);
+            //    Uri returnUri = await UserController.AddUserAsync(user, client);
             //}
         }
 
-        private async void ListButtonClick(object sender, RoutedEventArgs e)
+        async void RefreshUsersList()
         {
-            User user = new User();
-            user = await UserController.GetUserAsync(1);
-            UsersList.Items.Add(user.name);
+            List<User> users = new List<User>();
+            users = await UserController.GetUsersListAsync(client);
+            UsersList.Items.Clear();
+            foreach (User u in users)
+            {
+                UserListingItem userListingItem = new UserListingItem(this, u);
+                userListingItem.ShowUserRequest += DoubleClick;
+                UsersList.Items.Add(userListingItem);
+            }
+
+        }
+
+        private void ListButtonClick(object sender, RoutedEventArgs e)
+        {
+            RefreshUsersList();
+        }
+
+        private void NewButtonClick(object sender, RoutedEventArgs e)
+        {
+            UserLogin.IsEnabled = true;
+            UserPassword.IsEnabled = true;
+            UserName.Clear();
+            UserSurname.Clear();
+            UserLogin.Clear();
+            UserPassword.Clear();
+            UserDeleted.IsChecked = false;
+            UserID.Text = null;
+        }
+
+        private void DoubleClick(object sender, User user)
+        {
+            UserID.Text = user.userID.ToString();
+            UserName.Text = user.name;
+            UserSurname.Text = user.surname;
+            UserLogin.Text = user.login;
+            UserPassword.Text = user.password;
+            UserBirthDate.SelectedDate = user.birthDate;
+            UserDeleted.IsChecked = user.isDeleted;
+            UserLogin.IsEnabled = false;
+            UserPassword.IsEnabled = false;
+        }
+
+        private async void UpdateButtonClick(object sender, RoutedEventArgs e)
+        {
+            User user = await UserController.GetUserAsync(Int32.Parse(UserID.Text), client);
+            user.name = UserName.Text;
+            user.surname = UserSurname.Text;
+            user.birthDate = UserBirthDate.SelectedDate;
+            User returnedUser = await UserController.UpdateUserAsync(user, client);
+            RefreshUsersList();
+        }
+
+        private async void DeleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            User user = await UserController.GetUserAsync(Int32.Parse(UserID.Text), client);
+            User returnedUser = await UserController.DeleteUserAsync(user, client);
+            RefreshUsersList();
         }
     }
 }
